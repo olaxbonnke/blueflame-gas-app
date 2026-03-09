@@ -31,7 +31,7 @@ export function Hero() {
             BlueFlame Quality, <br/><span className="text-[#0EA5E9]">your Reliable Gas Supply</span>
           </h1>
           <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Reliable refills, installations, repairs & accessories delivered across Nigeria. Quality you can trust, speed you can depend on.
+            Reliable refills, installations, repairs & accessories delivered to you. Best Quality in service you can rely on.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             <Link href="/shop" className="px-12 py-4 bg-[#0EA5E9] hover:bg-sky-400 text-white font-bold rounded-full transition-all transform hover:-translate-y-1 shadow-xl shadow-[#0EA5E9]/20">
