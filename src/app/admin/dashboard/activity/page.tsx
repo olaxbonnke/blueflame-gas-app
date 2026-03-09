@@ -63,7 +63,7 @@ export default function ActivityLogPage() {
       </div>
 
       {/* Log Table */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.1} className="rounded-xl border border-white/5 bg-[#121212] overflow-hidden shadow-xl flex-1 flex flex-col">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-xl border border-white/5 bg-[#121212] overflow-hidden shadow-xl flex-1 flex flex-col">
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse">
             <thead className="bg-black/40">

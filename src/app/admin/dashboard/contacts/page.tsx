@@ -63,7 +63,7 @@ export default function CompanyContactsPage() {
         </motion.section>
 
         {/* Social Media Card */}
-        <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.1} className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl">
+        <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl">
           <div className="px-6 py-4 border-b border-white/5 bg-black/20">
             <h3 className="font-bold text-white flex items-center gap-2">
               <Share2 className="text-blueflame w-5 h-5" />
@@ -116,7 +116,7 @@ export default function CompanyContactsPage() {
         </motion.section>
 
         {/* Save Bar */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.2} className="flex flex-col sm:flex-row items-center justify-between p-6 bg-blueflame/5 border border-blueflame/20 rounded-xl gap-4">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex flex-col sm:flex-row items-center justify-between p-6 bg-blueflame/5 border border-blueflame/20 rounded-xl gap-4">
           <div className="flex items-center gap-3 text-blueflame">
             <Info className="w-5 h-5 shrink-0" />
             <p className="text-sm font-medium">Last updated: 2 hours ago by admin</p>
@@ -133,7 +133,7 @@ export default function CompanyContactsPage() {
       </div>
 
       {/* Help Section */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} delay={0.3} className="mt-8 p-6 rounded-xl border border-dashed border-white/20 flex flex-col items-center text-center bg-[#121212]/50">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-8 p-6 rounded-xl border border-dashed border-white/20 flex flex-col items-center text-center bg-[#121212]/50">
         <HelpCircle className="text-gray-500 w-10 h-10 mb-3" />
         <h4 className="text-white font-bold mb-1">Need assistance?</h4>
         <p className="text-gray-400 text-sm max-w-sm">If you're having trouble updating company information, please contact the internal IT support desk.</p>

@@ -86,7 +86,7 @@ export default function UserManagementPage() {
       </motion.section>
 
       {/* Admins List Table */}
-      <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.1} className="bg-[#121212] rounded-xl border border-white/5 shadow-xl overflow-hidden flex flex-col flex-1">
+      <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#121212] rounded-xl border border-white/5 shadow-xl overflow-hidden flex flex-col flex-1">
         <div className="p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-black/20">
           <div>
             <h3 className="text-lg font-bold text-white">Active Administrators</h3>

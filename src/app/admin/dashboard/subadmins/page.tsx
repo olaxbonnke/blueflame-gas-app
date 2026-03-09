@@ -95,7 +95,7 @@ export default function SubAdminManagementPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0} className="bg-[#121212] border border-white/5 p-6 rounded-xl shadow-xl hover:border-blueflame/30 transition-colors">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }} className="bg-[#121212] border border-white/5 p-6 rounded-xl shadow-xl hover:border-blueflame/30 transition-colors">
           <p className="text-gray-500 text-xs font-bold uppercase tracking-wider">Total Admins</p>
           <div className="flex items-end justify-between mt-2">
             <span className="text-3xl font-black text-white">24</span>
@@ -104,14 +104,14 @@ export default function SubAdminManagementPage() {
             </span>
           </div>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.1} className="bg-[#121212] border border-white/5 p-6 rounded-xl shadow-xl hover:border-white/20 transition-colors">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#121212] border border-white/5 p-6 rounded-xl shadow-xl hover:border-white/20 transition-colors">
           <p className="text-gray-500 text-xs font-bold uppercase tracking-wider">Main Admins</p>
           <div className="flex items-end justify-between mt-2">
             <span className="text-3xl font-black text-white">6</span>
             <span className="text-gray-400 text-xs font-bold">25% of total</span>
           </div>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.2} className="bg-[#121212] border border-white/5 p-6 rounded-xl shadow-xl hover:border-white/20 transition-colors">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#121212] border border-white/5 p-6 rounded-xl shadow-xl hover:border-white/20 transition-colors">
           <p className="text-gray-500 text-xs font-bold uppercase tracking-wider">Active Locations</p>
           <div className="flex items-end justify-between mt-2">
             <span className="text-3xl font-black text-white">18</span>
@@ -138,7 +138,7 @@ export default function SubAdminManagementPage() {
       </div>
 
       {/* Admin Table */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.3} className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl flex-1 flex flex-col">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl flex-1 flex flex-col">
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse">
             <thead className="bg-black/40">
@@ -219,7 +219,7 @@ export default function SubAdminManagementPage() {
       </motion.div>
 
       {/* Regional Map View (Mini) */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.4} className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl">
         <div className="p-6 border-b border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-bold text-white">Location Distribution</h3>

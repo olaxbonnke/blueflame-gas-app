@@ -70,7 +70,7 @@ export default function NewsletterEditorPage() {
             </motion.div>
 
             {/* Editor Area */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.1} className="space-y-2 flex flex-col h-full min-h-[500px]">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-2 flex flex-col h-full min-h-[500px]">
               <label className="text-sm font-semibold text-gray-400 uppercase tracking-wider ml-1">Content Body</label>
               <div className="bg-[#121212] border border-white/10 rounded-xl overflow-hidden focus-within:border-blueflame focus-within:ring-1 focus-within:ring-blueflame transition-all shadow-xl flex-1 flex flex-col">
                 
@@ -100,7 +100,7 @@ export default function NewsletterEditorPage() {
           <div className="space-y-6">
             
             {/* Scheduling */}
-            <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} delay={0.2} className="bg-[#121212] border border-white/5 rounded-xl p-6 space-y-4 shadow-xl">
+            <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-[#121212] border border-white/5 rounded-xl p-6 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2 pb-2 border-b border-white/5">
                 <Calendar className="text-blueflame w-5 h-5" />
                 Schedule
@@ -134,7 +134,7 @@ export default function NewsletterEditorPage() {
             </motion.div>
 
             {/* Image Preview */}
-            <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} delay={0.3} className="bg-[#121212] border border-white/5 rounded-xl p-6 space-y-4 shadow-xl">
+            <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-[#121212] border border-white/5 rounded-xl p-6 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2 pb-2 border-b border-white/5">
                 <ImageIcon className="text-blueflame w-5 h-5" />
                 Hero Image
@@ -160,7 +160,7 @@ export default function NewsletterEditorPage() {
             </motion.div>
 
             {/* Preview Action */}
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} delay={0.4} className="pt-2">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="pt-2">
               <button className="w-full group py-4 bg-[#121212] border-2 border-white/5 rounded-xl flex items-center justify-center gap-3 text-gray-400 hover:text-blueflame hover:border-blueflame/30 hover:bg-blueflame/5 transition-all shadow-lg">
                 <Eye className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 <span className="font-bold text-sm tracking-wide">Live Mobile Preview</span>

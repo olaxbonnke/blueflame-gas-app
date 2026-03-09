@@ -51,19 +51,19 @@ export default function BranchManagementPage() {
 
       {/* Stats Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Total Branches</p>
           <p className="text-2xl font-bold mt-1 text-white">12</p>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.1} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Active Hubs</p>
           <p className="text-2xl font-bold mt-1 text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">8</p>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.2} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Under Maintenance</p>
           <p className="text-2xl font-bold mt-1 text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">2</p>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} delay={0.3} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-[#121212] p-4 rounded-xl border border-white/5 shadow-sm">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Upcoming</p>
           <p className="text-2xl font-bold mt-1 text-blueflame drop-shadow-[0_0_8px_rgba(10,160,235,0.5)]">2</p>
         </motion.div>
@@ -73,7 +73,7 @@ export default function BranchManagementPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
         
         {/* Table Section */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} delay={0.4} className="lg:col-span-2 bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl flex flex-col h-full">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="lg:col-span-2 bg-[#121212] border border-white/5 rounded-xl overflow-hidden shadow-xl flex flex-col h-full">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
               <thead className="bg-black/40">
@@ -136,7 +136,7 @@ export default function BranchManagementPage() {
         </motion.div>
 
         {/* Detail/Edit Panel */}
-        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} delay={0.5} className="lg:col-span-1 bg-[#121212] border border-white/5 rounded-xl p-6 shadow-xl h-fit sticky top-6">
+        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }} className="lg:col-span-1 bg-[#121212] border border-white/5 rounded-xl p-6 shadow-xl h-fit sticky top-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-lg text-white">Edit {selectedBranch.name}</h3>
             {selectedBranch.statusColor === 'emerald' && (
