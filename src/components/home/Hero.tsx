@@ -28,7 +28,7 @@ export function Hero() {
           className="flex flex-col items-center"
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Safe Cooking Gas, <br/><span className="text-[#0EA5E9]">Delivered Fast</span>
+            BlueFlame Quality, <br/><span className="text-[#0EA5E9]">your Reliable Gas Supply</span>
           </h1>
           <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
             Reliable refills, installations, repairs & accessories delivered across Nigeria. Quality you can trust, speed you can depend on.
