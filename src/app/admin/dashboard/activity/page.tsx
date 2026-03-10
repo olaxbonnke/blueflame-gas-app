@@ -4,14 +4,7 @@ import { useState } from 'react';
 import { Search, Bell, Calendar, User, MapPin, History, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const ACTIVITY_LOGS = [
-  { id: 1, date: 'Oct 24, 2023', time: '14:32:01 PM', initials: 'AR', name: 'Alex Rivera', role: 'Super Admin', action: 'Updated LPG Price to $2.40/kg', location: 'Houston, TX' },
-  { id: 2, date: 'Oct 24, 2023', time: '13:15:44 PM', initials: 'SC', name: 'Sarah Chen', role: 'Manager', action: 'Approved Bulk Order #BF-102', location: 'Austin, TX' },
-  { id: 3, date: 'Oct 24, 2023', time: '11:45:12 AM', initials: 'MV', name: 'Michael Vogt', role: 'Support', action: 'Reset Password for Customer #ID-992', location: 'Dallas, TX' },
-  { id: 4, date: 'Oct 24, 2023', time: '09:20:55 AM', initials: 'AR', name: 'Alex Rivera', role: 'Super Admin', action: 'Modified Delivery Zone: North Sector', location: 'Houston, TX' },
-  { id: 5, date: 'Oct 23, 2023', time: '17:55:30 PM', initials: 'SC', name: 'Sarah Chen', role: 'Manager', action: 'Flagged Account #BF-881 for Review', location: 'Austin, TX' },
-  { id: 6, date: 'Oct 23, 2023', time: '16:10:14 PM', initials: 'AR', name: 'Alex Rivera', role: 'Super Admin', action: 'Generated Monthly Revenue Report (Sept 2023)', location: 'Houston, TX' },
-];
+const ACTIVITY_DATA: any[] = [];
 
 export default function ActivityLogPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,7 +69,9 @@ export default function ActivityLogPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {ACTIVITY_LOGS.map((log) => (
+              {ACTIVITY_DATA.length === 0 ? (
+                 <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No recent activity detected.</td></tr>
+              ) : ACTIVITY_DATA.map((log) => (
                 <tr key={log.id} className="group hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4">
                     <div className="text-sm font-semibold text-white">{log.date}</div>

@@ -4,13 +4,7 @@ import { useState } from 'react';
 import { Search, Bell, UserPlus, Save, Download, Edit, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const ADMINS_DATA = [
-  { id: 1, initials: 'JW', name: 'John Wick', email: 'wick.j@blueflame.com', role: 'Main', location: 'Global HQ', lastActive: '2 mins ago', color: 'text-white' },
-  { id: 2, initials: 'MS', name: 'Maria Santos', email: 'santos.m@blueflame.com', role: 'Regional', location: 'South Region', lastActive: '45 mins ago', color: 'text-blueflame' },
-  { id: 3, initials: 'RK', name: 'Robert King', email: 'king.r@blueflame.com', role: 'Regional', location: 'North Region', lastActive: '2 hours ago', color: 'text-white' },
-  { id: 4, initials: 'EL', name: 'Emily Lake', email: 'lake.e@blueflame.com', role: 'Main', location: 'Global HQ', lastActive: 'Yesterday', color: 'text-white' },
-  { id: 5, initials: 'DP', name: 'David Park', email: 'park.d@blueflame.com', role: 'Regional', location: 'East Coast', lastActive: '3 days ago', color: 'text-blueflame' },
-];
+const ADMINS_DATA: any[] = [];
 
 export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -121,7 +115,9 @@ export default function UserManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {ADMINS_DATA.map((admin) => (
+              {ADMINS_DATA.length === 0 ? (
+                 <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No users found.</td></tr>
+              ) : ADMINS_DATA.map((admin) => (
                 <tr key={admin.id} className="hover:bg-white/5 transition-colors group cursor-pointer">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">

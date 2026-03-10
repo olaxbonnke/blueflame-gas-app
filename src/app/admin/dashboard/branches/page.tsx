@@ -95,12 +95,21 @@ export default function BranchManagementPage() {
      e.stopPropagation();
      if (confirm("Are you sure you want to delete this branch?")) {
          const { error } = await supabase.from('branches').delete().eq('id', id);
-         if (!error) {
+      if (!error) {
             const updated = branches.filter(b => b.id !== id);
             setBranches(updated);
+            
             if (selectedBranch?.id === id) {
-               if (updated.length > 0) handleSelectBranch(updated[0]);
-               else handleCreateNew();
+               if (updated.length > 0) {
+                 handleSelectBranch(updated[0]);
+               } else {
+                 setSelectedBranch(null);
+                 setIsAddingMode(true);
+                 setEditName('');
+                 setEditPhone('');
+                 setEditAddress('');
+                 setEditCoords('');
+               }
             }
          } else {
             alert("Failed to delete branch. Ensure there are no active orders tied to it.");
