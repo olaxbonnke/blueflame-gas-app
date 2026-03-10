@@ -108,32 +108,34 @@ export default function CartPage() {
               </div>
               <div className="p-6 space-y-6">
                 {items.map((item) => (
-                  <div key={item.id} className="flex gap-4 items-center">
-                    <div className="w-20 h-20 shrink-0 bg-[#121212] rounded-xl border border-white/10 flex items-center justify-center">
-                      <span className="text-xs font-bold text-gray-400">{item.name}</span>
+                  <div key={item.id} className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center relative pb-10 sm:pb-0">
+                    <div className="flex gap-3 sm:gap-4 items-center w-full sm:w-auto">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 bg-[#121212] rounded-xl border border-white/10 flex items-center justify-center">
+                        <span className="text-[10px] sm:text-xs font-bold text-gray-400 text-center px-1 leading-tight">{item.name}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-base sm:text-lg leading-tight mb-1 sm:mb-0">{item.name}</h3>
+                        <p className="text-blueflame font-bold">{formatPrice(item.price)}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{item.name}</h3>
-                      <p className="text-blueflame font-medium">{formatPrice(item.price)}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-3 bg-black/50 border border-white/10 rounded-full px-3 py-1">
+                    <div className="flex items-center gap-3 sm:gap-4 absolute sm:static bottom-0 left-0">
+                      <div className="flex items-center gap-2 sm:gap-3 bg-black/50 border border-white/10 rounded-full px-2 sm:px-3 py-1">
                         <button 
                           onClick={() => updateQty(item.id, Math.max(1, item.qty - 1))}
-                          className="w-6 h-6 flex items-center justify-center hover:text-blueflame disabled:opacity-50"
+                          className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:text-blueflame disabled:opacity-50 transition-colors"
                           disabled={item.qty <= 1}
                         >-</button>
-                        <span className="font-medium w-4 text-center">{item.qty}</span>
+                        <span className="font-medium text-sm sm:text-base w-4 text-center">{item.qty}</span>
                         <button 
                           onClick={() => updateQty(item.id, item.qty + 1)}
-                          className="w-6 h-6 flex items-center justify-center hover:text-blueflame"
+                          className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center hover:text-blueflame transition-colors"
                         >+</button>
                       </div>
                       <button 
                         onClick={() => removeItem(item.id)}
-                        className="p-2 text-red-400 hover:bg-red-400/10 rounded-full transition-colors"
+                        className="p-1.5 sm:p-2 text-red-400 hover:bg-red-400/10 rounded-full transition-colors"
                       >
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
                     </div>
                   </div>

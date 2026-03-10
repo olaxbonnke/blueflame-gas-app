@@ -156,30 +156,30 @@ export default function NewsletterPage() {
               </div>
             </FadeInView>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
               {BULLETINS.map((post, idx) => (
                 <FadeInView key={post.id} delay={0.2 + (idx * 0.1)} className="h-full">
                   <article className="flex flex-col h-full bg-[#0F1117] rounded-3xl overflow-hidden border border-white/5 shadow-lg shadow-black/20 hover:shadow-2xl hover:border-[#0EA5E9]/30 transition-all duration-500 group cursor-pointer">
-                    <div className="h-52 w-full bg-white/5 relative overflow-hidden">
+                    <div className="h-32 sm:h-52 w-full bg-white/5 relative overflow-hidden">
                       <div 
                         className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" 
                         style={{ backgroundImage: `url("${post.image}")` }}
                       ></div>
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0F1117]/80 to-transparent"></div>
-                      <div className={`absolute top-4 left-4 ${post.tagColor} text-white px-3 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg shadow-lg`}>
+                      <div className={`absolute top-2 left-2 sm:top-4 sm:left-4 ${post.tagColor} text-white px-2 py-1 sm:px-3 sm:py-1.5 text-[8px] sm:text-xs font-black uppercase tracking-wider rounded-md sm:rounded-lg shadow-lg`}>
                         {post.tag}
                       </div>
                     </div>
-                    <div className="p-8 flex flex-col flex-grow relative -mt-4 bg-[#0F1117] rounded-t-3xl transition-transform duration-300">
-                      <span className="text-xs text-gray-500 font-bold mb-3 uppercase tracking-widest">{post.date}</span>
-                      <h3 className="text-xl font-black text-white leading-snug mb-4 group-hover:text-[#0EA5E9] transition-colors">
+                    <div className="p-4 sm:p-8 flex flex-col flex-grow relative -mt-4 bg-[#0F1117] rounded-t-2xl sm:rounded-t-3xl transition-transform duration-300">
+                      <span className="text-[10px] sm:text-xs text-gray-500 font-bold mb-2 sm:mb-3 uppercase tracking-widest">{post.date}</span>
+                      <h3 className="text-sm sm:text-xl font-black text-white leading-tight sm:leading-snug mb-2 sm:mb-4 group-hover:text-[#0EA5E9] transition-colors">
                         {post.title}
                       </h3>
-                      <p className="text-gray-400 text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">
+                      <p className="text-gray-400 text-[10px] sm:text-sm leading-relaxed line-clamp-3 mb-4 sm:mb-6 flex-grow">
                         {post.excerpt}
                       </p>
-                      <div className="inline-flex items-center gap-2 text-[#0EA5E9] text-sm font-bold uppercase tracking-widest group-hover:gap-3 transition-all mt-auto pt-4 border-t border-white/5">
-                        Read Article <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                      <div className="inline-flex items-center gap-1 sm:gap-2 text-[#0EA5E9] text-[10px] sm:text-sm font-bold uppercase tracking-widest group-hover:gap-2 sm:group-hover:gap-3 transition-all mt-auto pt-3 sm:pt-4 border-t border-white/5">
+                        <span className="hidden sm:inline">Read Article</span><span className="sm:hidden">Read</span> <span className="material-symbols-outlined text-[14px] sm:text-[18px]">arrow_forward</span>
                       </div>
                     </div>
                   </article>

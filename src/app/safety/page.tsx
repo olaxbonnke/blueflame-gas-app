@@ -115,17 +115,17 @@ export default function SafetyPage() {
                     <span className="material-symbols-outlined">info</span>
                     How to perform the test:
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-gray-300">
-                    <div className="flex flex-col gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#0EA5E9] text-white flex items-center justify-center font-bold shadow-lg shadow-[#0EA5E9]/30">1</div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 text-[11px] sm:text-sm text-gray-300">
+                    <div className="flex flex-col gap-2 sm:gap-3">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#0EA5E9] text-white flex items-center justify-center font-bold shadow-lg shadow-[#0EA5E9]/30 text-xs sm:text-base">1</div>
                       <p>Mix liquid dish soap with water in a spray bottle or bowl.</p>
                     </div>
-                    <div className="flex flex-col gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#0EA5E9] text-white flex items-center justify-center font-bold shadow-lg shadow-[#0EA5E9]/30">2</div>
+                    <div className="flex flex-col gap-2 sm:gap-3">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#0EA5E9] text-white flex items-center justify-center font-bold shadow-lg shadow-[#0EA5E9]/30 text-xs sm:text-base">2</div>
                       <p>Apply the solution to the valves, hoses, and connections.</p>
                     </div>
-                    <div className="flex flex-col gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#0EA5E9] text-white flex items-center justify-center font-bold shadow-lg shadow-[#0EA5E9]/30">3</div>
+                    <div className="flex flex-col gap-2 sm:gap-3">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#0EA5E9] text-white flex items-center justify-center font-bold shadow-lg shadow-[#0EA5E9]/30 text-xs sm:text-base">3</div>
                       <p>Turn on the gas. <b className="text-white">Growing bubbles</b> indicate a leak.</p>
                     </div>
                   </div>
@@ -141,29 +141,29 @@ export default function SafetyPage() {
                   <span className="material-symbols-outlined text-[#0EA5E9] text-3xl">inventory_2</span>
                   <h2 className="text-2xl font-bold text-white">Cylinder Storage &amp; Handling</h2>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-white/5 p-8 rounded-2xl border border-white/5 hover:border-green-500/30 transition-colors">
-                    <h4 className="font-bold mb-4 flex items-center gap-2 text-green-500">
-                      <span className="material-symbols-outlined">check_circle</span>
-                      Proper Storage
+                <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 sm:gap-6">
+                  <div className="bg-white/5 p-4 sm:p-8 rounded-xl sm:rounded-2xl border border-white/5 hover:border-green-500/30 transition-colors">
+                    <h4 className="font-bold mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2 text-green-500 text-sm sm:text-base">
+                      <span className="material-symbols-outlined text-base sm:text-[24px]">check_circle</span>
+                      <span className="leading-tight">Proper Storage</span>
                     </h4>
-                    <ul className="text-sm text-gray-400 space-y-3">
-                      <li className="flex gap-2"><span>&bull;</span> Store in an upright position at all times.</li>
-                      <li className="flex gap-2"><span>&bull;</span> Keep in a well-ventilated outdoor area.</li>
-                      <li className="flex gap-2"><span>&bull;</span> Place on a flat, non-flammable surface.</li>
-                      <li className="flex gap-2"><span>&bull;</span> Ensure valves are tightly closed when not in use.</li>
+                    <ul className="text-[10px] sm:text-sm text-gray-400 space-y-2 sm:space-y-3">
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Store in an upright position at all times.</li>
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Keep in a well-ventilated outdoor area.</li>
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Place on a flat, non-flammable surface.</li>
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Ensure valves are tightly closed when not in use.</li>
                     </ul>
                   </div>
-                  <div className="bg-white/5 p-8 rounded-2xl border border-white/5 hover:border-red-500/30 transition-colors">
-                    <h4 className="font-bold mb-4 flex items-center gap-2 text-red-500">
-                      <span className="material-symbols-outlined">cancel</span>
-                      Avoid Doing This
+                  <div className="bg-white/5 p-4 sm:p-8 rounded-xl sm:rounded-2xl border border-white/5 hover:border-red-500/30 transition-colors">
+                    <h4 className="font-bold mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2 text-red-500 text-sm sm:text-base">
+                      <span className="material-symbols-outlined text-base sm:text-[24px]">cancel</span>
+                      <span className="leading-tight">Avoid Doing This</span>
                     </h4>
-                    <ul className="text-sm text-gray-400 space-y-3">
-                      <li className="flex gap-2"><span>&bull;</span> Never store cylinders in basements.</li>
-                      <li className="flex gap-2"><span>&bull;</span> Do not store near heat sources.</li>
-                      <li className="flex gap-2"><span>&bull;</span> Never store more than you need.</li>
-                      <li className="flex gap-2"><span>&bull;</span> Do not drop or roughly handle cylinders.</li>
+                    <ul className="text-[10px] sm:text-sm text-gray-400 space-y-2 sm:space-y-3">
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Never store cylinders in basements.</li>
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Do not store near heat sources.</li>
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Never store more than you need.</li>
+                      <li className="flex gap-1.5 sm:gap-2"><span className="shrink-0">&bull;</span> Do not drop or roughly handle cylinders.</li>
                     </ul>
                   </div>
                 </div>

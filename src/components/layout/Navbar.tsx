@@ -65,7 +65,7 @@ export function Navbar() {
         
         {/* Actions & Hamburger */}
         <div className="flex items-center gap-3 md:gap-6">
-          <Link href="/cart" className="relative p-2 hover:bg-white/5 rounded-full transition-colors group">
+          <Link href="/cart" className="relative p-3 sm:p-2 hover:bg-white/5 active:bg-white/10 rounded-full transition-colors group">
             <ShoppingCart className="w-6 h-6 text-white/80 group-hover:text-[#0EA5E9] transition-colors" />
             {cartCount > 0 && (
               <span className="absolute top-1 right-1 bg-[#F59E0B] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
@@ -80,7 +80,7 @@ export function Navbar() {
           
           {/* Mobile Menu Trigger */}
           <button 
-            className="lg:hidden p-2 text-white hover:bg-white/5 rounded-lg transition-colors"
+            className="lg:hidden p-3 -mr-2 text-white hover:bg-white/5 active:bg-white/10 rounded-lg transition-colors cursor-pointer"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             {mobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
