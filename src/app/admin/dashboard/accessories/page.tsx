@@ -1,142 +1,250 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Filter, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Plus, Edit, Trash2, Loader2, Save, X, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { supabase } from '@/lib/supabase/client';
+import { formatPrice } from '@/lib/utils';
 
-const ACCESSORIES_DATA = [
-  { 
-    id: 1, 
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBtHK2mHO3dCjADiF1TbjKW2pODHCy4_wxdhZ7jjNacMRhmhfcTwodyWJdke5cLhrwAXgU7omzU2-J9N_2quXxvrJ79SQkRNfawSe_HgD1XoL6gb9zfdZ5TUjAx7zyJ4dl_-TwGnCosNhpfPVNTM7hoeW3Vq5jnJ5w96J0K5J7njGQBnFmhaUHyYpBABGsFzk2rxh-Fxf-hmId_l8y1eEsq4Fq7b19WjxrbkKOo72Wa0zVuhvrJlKVoVw6BraRWdXZGvsA36wLNbhk', // Using placeholder from HTML
-    name: 'Premium PVC Hose', 
-    sku: 'BFG-HSE-001', 
-    price: 2500, 
-    stock: 142, 
-    status: 'In Stock', 
-    statusColor: 'emerald' 
-  },
-  { 
-    id: 2, 
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCxOdSM5FAyqDbHCVlIM-Lsq6DmRhSpFRRlwUZOn1Wdtqf1xXAgwjSM1wipci31NjsU9I30J3l_TP72utxvMgWSA2KfkhV5S19ezpJ4eIaJ1iNYo8GoOnx_WJDdDV2LibkWhzYXISIIDjiVOvZVBGA7XDfjCwGCnW8NVkE2dxIX0VZmVMQ9MhND04AJwpoRPc33QQ8Bm7D4v425ai0R-9Nkp9yJP9Wc0cJgd7ku2XphlgRiNYzVjPA1gjQLLESAMbDJyKZVsatqrCQ',
-    name: 'Low Pressure Regulator', 
-    sku: 'BFG-REG-450', 
-    price: 4500, 
-    stock: 85, 
-    status: 'In Stock', 
-    statusColor: 'emerald' 
-  },
-  { 
-    id: 3, 
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCFMkbevOAT1ejduU7pT7f5UHt8T_dqts3uWEw8G12hUQicOqr_AI0nnPzIi2JSm5KdcE_1IPAvCHVXYf6oQotePc68LpT7OzxGcpFDsCq9_f1UmjJ-TRie6J1bidQJ_g8z86eAbppVmhyPYFi45TGLGLQE2xpPrFQwtURgkeOiE9OnTGy6j1lkyQdXRdNwQE8rhS4wIIGIuLW_QtXmxeC6ej4nfgeIY5iYZBeagmqjOKK8Rf0dNmQXzNmf8Lvvob744Lr3JUXkiJE',
-    name: 'Steel Base Protector', 
-    sku: 'BFG-STP-202', 
-    price: 1800, 
-    stock: 0, 
-    status: 'Out of Stock', 
-    statusColor: 'rose' 
-  },
-  { 
-    id: 4, 
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBH4efwY3EUjekGMqwCBU8k1YB3F86RuVsIHhqtzxFk2Gk_JvN7Pnq4TwnRbkHqLgKY5V2cTXmMdFMAtwJu9a7vv2sWfkdknGkflTouqHHUr5Hmp6mj7ei-lJm5UK92Gq9q5R8nqy8VLvHgkIidZssKuE05XAL7QFtT_hxRnA6DPRmW7WyqgG_x9qOg3skX9wVPVDPpD3mN-oek-sZgLrI_W_QOVzpCNwgBKM6gV0MTwarbf_QgK9s43OcHMrcGp7K80QkbWTcwaAk',
-    name: 'Electronic Sparker', 
-    sku: 'BFG-SPK-911', 
-    price: 1200, 
-    stock: 8, 
-    status: 'Low Stock', 
-    statusColor: 'amber' 
-  },
-];
+const CATEGORIES = ['Accessories', 'Regulators', 'Hoses', 'Burners', 'Cylinders', 'Other'];
 
-export default function AccessoriesManagementPage() {
-  const [searchQuery, setSearchQuery] = useState('');
+function AccessoryForm({ item, onSave, onCancel, isSaving }: any) {
+  const [name, setName] = useState(item?.name || '');
+  const [category, setCategory] = useState(item?.category || 'Accessories');
+  const [description, setDescription] = useState(item?.description || '');
+  const [price, setPrice] = useState(item?.price?.toString() || '');
+  const [stockStatus, setStockStatus] = useState(item?.stock_status || 'In Stock');
+  const [imageUrl, setImageUrl] = useState(item?.image_url || '');
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Accessories Management</h2>
-          <p className="text-sm text-gray-400">Manage your inventory of gas stove accessories</p>
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Product Name *</label>
+          <input
+            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-blueflame focus:border-blueflame outline-none transition-colors text-sm"
+            placeholder="e.g. High Pressure Regulator"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
         </div>
-        <button className="bg-blueflame hover:bg-blueflame-dark text-white px-6 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-blueflame/20">
-          <Plus className="w-5 h-5" />
-          Add New Accessory
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Category *</label>
+          <select
+            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-blueflame outline-none appearance-none text-sm"
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+          >
+            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Price (₦) *</label>
+          <input
+            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-blueflame focus:border-blueflame outline-none transition-colors text-sm"
+            type="number"
+            placeholder="e.g. 4500"
+            value={price}
+            onChange={e => setPrice(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Stock Status</label>
+          <select
+            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-blueflame outline-none appearance-none text-sm"
+            value={stockStatus}
+            onChange={e => setStockStatus(e.target.value)}
+          >
+            <option>In Stock</option>
+            <option>Low Stock</option>
+            <option>Out of Stock</option>
+          </select>
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Description</label>
+          <textarea
+            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-blueflame focus:border-blueflame outline-none transition-colors resize-none text-sm"
+            rows={2}
+            placeholder="Short product description..."
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Image URL</label>
+          <input
+            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-blueflame focus:border-blueflame outline-none transition-colors text-sm"
+            placeholder="https://... or leave blank"
+            value={imageUrl}
+            onChange={e => setImageUrl(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="flex justify-end gap-3 pt-2">
+        <button onClick={onCancel} className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors border border-white/10">
+          Cancel
         </button>
-      </header>
+        <button
+          onClick={() => onSave({ name, category, description, price: parseFloat(price), stock_status: stockStatus, image_url: imageUrl })}
+          disabled={isSaving || !name || !price}
+          className="px-6 py-2 bg-blueflame disabled:opacity-50 text-sm font-bold text-white rounded-lg flex items-center gap-2 transition-all"
+        >
+          {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {item ? 'Save Changes' : 'Create Accessory'}
+        </button>
+      </div>
+    </div>
+  );
+}
 
-      {/* Content Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Search and Filter Bar */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <div className="flex-1 min-w-[300px] relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input 
-              className="w-full pl-10 pr-4 py-2.5 bg-[#121212] border border-white/10 rounded-lg focus:ring-1 focus:ring-blueflame focus:border-blueflame outline-none text-sm text-white transition-all placeholder:text-gray-500" 
-              placeholder="Search accessories by name or SKU..." 
-              type="text"
+export default function AccessoriesManagementPage() {
+  const [accessories, setAccessories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editItem, setEditItem] = useState<any | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => { fetchAccessories(); }, []);
+
+  const fetchAccessories = async () => {
+    setLoading(true);
+    const { data } = await supabase.from('accessories').select('*').order('name');
+    if (data) setAccessories(data);
+    setLoading(false);
+  };
+
+  const handleSave = async (formData: any) => {
+    if (isNaN(formData.price) || formData.price <= 0) { alert('Please enter a valid price.'); return; }
+    setIsSaving(true);
+    if (editItem) {
+      const { error } = await supabase.from('accessories').update(formData).eq('id', editItem.id);
+      if (!error) {
+        setAccessories(accessories.map(a => a.id === editItem.id ? { ...a, ...formData } : a));
+        setEditItem(null); setIsFormOpen(false);
+      } else alert('Failed to update: ' + error.message);
+    } else {
+      const { data, error } = await supabase.from('accessories').insert([formData]).select().single();
+      if (!error && data) {
+        setAccessories([...accessories, data]);
+        setIsFormOpen(false);
+      } else alert('Failed to create: ' + error?.message);
+    }
+    setIsSaving(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this accessory? It will no longer appear on the customer shop.')) return;
+    const { error } = await supabase.from('accessories').delete().eq('id', id);
+    if (!error) setAccessories(accessories.filter(a => a.id !== id));
+    else alert('Failed to delete: ' + error.message);
+  };
+
+  const handleEdit = (item: any) => { setEditItem(item); setIsFormOpen(true); };
+  const handleCancel = () => { setEditItem(null); setIsFormOpen(false); };
+
+  const filtered = accessories.filter(a =>
+    a.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    a.category?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const statusColor = (status: string) => {
+    if (status === 'In Stock') return 'text-emerald-400';
+    if (status === 'Low Stock') return 'text-amber-400';
+    return 'text-rose-400';
+  };
+
+  return (
+    <div className="flex flex-col h-full space-y-6">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-black text-white tracking-tight">Accessories</h2>
+          <p className="text-sm text-gray-400">{accessories.length} items in catalog — changes reflect live on the customer shop</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="relative hidden sm:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+            <input
+              className="pl-10 pr-4 py-2 bg-[#121212] border border-white/10 rounded-lg text-sm w-56 focus:ring-1 focus:ring-blueflame outline-none text-white placeholder:text-gray-500"
+              placeholder="Search accessories..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
             />
           </div>
-          <button className="px-4 py-2.5 bg-[#121212] border border-white/10 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-white/5 transition-colors text-white">
-            <Filter className="w-5 h-5" />
-            Filters
+          <button
+            onClick={() => { setEditItem(null); setIsFormOpen(true); }}
+            className="bg-blueflame hover:bg-blueflame-dark text-white px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition-all shadow-lg shadow-blueflame/20"
+          >
+            <Plus className="w-4 h-4" /> Add Accessory
           </button>
         </div>
+      </header>
 
-        {/* CRUD Table */}
+      {isFormOpen && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#121212] border border-blueflame/30 rounded-xl p-6 shadow-xl">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-bold text-white">{editItem ? `Editing: ${editItem.name}` : 'New Accessory'}</h3>
+            <button onClick={handleCancel} className="text-gray-500 hover:text-white p-1"><X className="w-5 h-5" /></button>
+          </div>
+          <AccessoryForm item={editItem} onSave={handleSave} onCancel={handleCancel} isSaving={isSaving} />
+        </motion.div>
+      )}
+
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-blueflame animate-spin" />
+        </div>
+      ) : (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-[#121212] rounded-xl border border-white/5 overflow-hidden shadow-xl flex-1 flex flex-col">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left border-collapse">
               <thead className="bg-black/40 border-b border-white/5">
                 <tr>
                   <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider w-20">Image</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Price (₦)</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Stock Status</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Product</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Category</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Price</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {ACCESSORIES_DATA.map((item, index) => (
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center">
+                      <Package className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+                      <p className="text-gray-500">No accessories yet. Add your first product.</p>
+                    </td>
+                  </tr>
+                ) : filtered.map(item => (
                   <tr key={item.id} className="hover:bg-white/5 transition-colors group">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="w-12 h-12 rounded-lg bg-black/50 overflow-hidden flex items-center justify-center border border-white/10 group-hover:border-blueflame/50 transition-colors">
-                        <div 
-                          className="w-full h-full bg-cover bg-center" 
-                          style={{ backgroundImage: `url('${item.image}')` }}
-                        />
+                        {item.image_url
+                          ? <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('${item.image_url}')` }} />
+                          : <Package className="w-5 h-5 text-gray-600" />
+                        }
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4">
                       <div className="text-sm font-bold text-white group-hover:text-blueflame transition-colors">{item.name}</div>
-                      <div className="text-xs text-gray-500">SKU: {item.sku}</div>
+                      <div className="text-xs text-gray-500 line-clamp-1">{item.description}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-medium text-gray-300">{item.price.toLocaleString()}</span>
+                    <td className="px-6 py-4">
+                      <span className="text-xs font-medium px-2 py-1 rounded-full bg-white/5 text-gray-300 border border-white/10">{item.category || '—'}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2 object-contain">
-                        <span className={`w-2 h-2 rounded-full ${
-                          item.statusColor === 'emerald' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' :
-                          item.statusColor === 'amber' ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]' :
-                          item.statusColor === 'rose' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' : ''
-                        }`}></span>
-                        <span className={`text-xs font-medium ${
-                          item.statusColor === 'emerald' ? 'text-emerald-400' :
-                          item.statusColor === 'amber' ? 'text-amber-400' :
-                          item.statusColor === 'rose' ? 'text-rose-400' : ''
-                        }`}>
-                          {item.status} {item.stock > 0 && `(${item.stock})`}
-                        </span>
-                      </div>
+                    <td className="px-6 py-4">
+                      <span className="text-sm font-medium text-white">₦{(item.price || 0).toLocaleString()}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4">
+                      <span className={`text-xs font-semibold ${statusColor(item.stock_status)}`}>{item.stock_status || 'In Stock'}</span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 text-gray-400 hover:text-blueflame hover:bg-blueflame/10 rounded-lg transition-colors">
+                        <button onClick={() => handleEdit(item)} className="p-2 text-gray-400 hover:text-blueflame hover:bg-blueflame/10 rounded-lg transition-colors">
                           <Edit className="w-4 h-4" />
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
+                        <button onClick={() => handleDelete(item.id)} className="p-2 text-gray-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -146,21 +254,13 @@ export default function AccessoriesManagementPage() {
               </tbody>
             </table>
           </div>
-
-          {/* Pagination */}
-          <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-black/20">
-            <span className="text-xs text-gray-500">Showing 1 to 4 of 24 results</span>
-            <div className="flex items-center gap-2">
-              <button disabled className="p-2 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-white">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button className="p-2 rounded-lg border border-white/10 hover:bg-white/5 transition-colors text-white">
-                <ChevronRight className="w-4 h-4" />
-              </button>
+          {filtered.length > 0 && (
+            <div className="px-6 py-4 border-t border-white/5 bg-black/20">
+              <p className="text-xs text-gray-500">Showing {filtered.length} of {accessories.length} products</p>
             </div>
-          </div>
+          )}
         </motion.div>
-      </div>
+      )}
     </div>
   );
 }
