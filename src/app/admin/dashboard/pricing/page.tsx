@@ -20,16 +20,19 @@ export default function PricingInventoryPage() {
 
   const fetchGlobalPrice = async () => {
     setLoading(true);
+    // Get the most recently inserted/updated price row
     const { data, error } = await supabase
       .from('prices')
       .select('*')
       .order('updated_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     if (data) {
       setGlobalPrice(data.lpg_price_per_kg);
       setEditPrice(data.lpg_price_per_kg.toString());
       setPriceId(data.id);
+    } else if (error) {
+      console.error('[Pricing] fetch error:', error.message);
     }
     setLoading(false);
   };
@@ -37,23 +40,40 @@ export default function PricingInventoryPage() {
   const handleUpdatePrice = async () => {
     const newPrice = parseFloat(editPrice);
     if (isNaN(newPrice) || newPrice <= 0) {
-      alert("Please enter a valid price greater than 0.");
+      alert('Please enter a valid price greater than 0.');
       return;
     }
 
     setIsSaving(true);
 
-    // If no row exists yet, insert. Otherwise update.
     if (priceId) {
-      const { error } = await supabase.from('prices').update({ lpg_price_per_kg: newPrice }).eq('id', priceId);
-      if (!error) setGlobalPrice(newPrice);
-      else alert("Failed to update price.");
+      // Update existing row
+      const { error } = await supabase
+        .from('prices')
+        .update({ lpg_price_per_kg: newPrice, updated_at: new Date().toISOString() })
+        .eq('id', priceId);
+
+      if (!error) {
+        setGlobalPrice(newPrice);
+      } else {
+        console.error('[Pricing] update error:', error);
+        alert(`Failed to update price: ${error.message}`);
+      }
     } else {
-      const { data, error } = await supabase.from('prices').insert([{ lpg_price_per_kg: newPrice }]).select().single();
+      // No row yet — insert one
+      const { data, error } = await supabase
+        .from('prices')
+        .insert([{ lpg_price_per_kg: newPrice }])
+        .select()
+        .single();
+
       if (!error && data) {
         setGlobalPrice(newPrice);
         setPriceId(data.id);
-      } else alert("Failed to establish base price.");
+      } else {
+        console.error('[Pricing] insert error:', error);
+        alert(`Failed to set price: ${error?.message}`);
+      }
     }
 
     setIsSaving(false);
