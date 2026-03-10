@@ -8,9 +8,16 @@ import { Loader2, ShieldCheck, ShieldAlert } from 'lucide-react';
 function AuthCallbackContent() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [hash, setHash] = useState('');
 
   useEffect(() => {
     let isMounted = true;
+    setHash(window.location.hash);
+    
+    // Only proceed if there is a hash or if we explicitly don't need one
+    if (!window.location.hash && !window.location.search) {
+       return;
+    }
     
     const handleCallback = async () => {
       // Supabase client automatically processes the OAuth callback in the URL
@@ -111,7 +118,7 @@ function AuthCallbackContent() {
         isMounted = false;
         clearTimeout(timer);
     };
-  }, [router]);
+  }, [router, hash]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] text-white px-4 text-center">
