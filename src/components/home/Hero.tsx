@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export function Hero() {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-[120px] pb-10 md:pt-20 md:pb-0">
       {/* Video Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black/60 z-10"></div>
@@ -27,7 +27,7 @@ export function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col items-center"
         >
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-4xl md:text-7xl font-bold mb-6 leading-tight">
             BlueFlame Quality, <br/><span className="text-[#0EA5E9]">your Reliable Gas Supply</span>
           </h1>
           <p className="text-lg md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">

@@ -125,7 +125,7 @@ export default function ShopPage() {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-8">
           {filteredProducts.map((product, idx) => (
             <FadeInView key={product.id} delay={0.1 + (idx * 0.1)}>
               <div className="group flex flex-col bg-[#11151C] rounded-2xl overflow-hidden border border-white/5 hover:border-[#0EA5E9]/50 transition-all duration-500 shadow-sm hover:shadow-2xl hover:-translate-y-1 h-full">
@@ -140,31 +140,32 @@ export default function ShopPage() {
                   </span>
                 </div>
                 
-                <div className="p-6 flex flex-col flex-1">
+                <div className="p-3 sm:p-6 flex flex-col flex-1">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-white font-bold text-lg leading-tight tracking-tight">{product.name}</h3>
+                    <h3 className="text-white font-bold text-sm sm:text-lg leading-tight tracking-tight line-clamp-2 sm:line-clamp-none mb-1 sm:mb-0">{product.name}</h3>
                     <button className="text-gray-500 hover:text-red-500 transition-colors">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     </button>
                   </div>
-                  <p className="text-gray-400 text-sm mb-6 leading-relaxed flex-grow">{product.description}</p>
+                  <p className="text-gray-400 text-[11px] sm:text-sm mb-3 sm:mb-6 leading-relaxed flex-grow line-clamp-2 sm:line-clamp-none">{product.description}</p>
                   
                   <div className="mt-auto">
-                    <div className="flex items-end justify-between mb-5 relative">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-4 sm:mb-5 relative gap-1.5 sm:gap-0">
                       <div className="flex flex-col">
-                        <span className="text-xs text-gray-500 font-medium mb-1 uppercase tracking-tighter">Price</span>
-                        <span className="font-black text-2xl text-white">₦{product.price.toLocaleString()}</span>
+                        <span className="text-[10px] sm:text-xs text-gray-500 font-medium sm:mb-1 uppercase tracking-tighter leading-none">Price</span>
+                        <span className="font-black text-base sm:text-2xl text-white">₦{product.price.toLocaleString()}</span>
                       </div>
-                      <span className={`text-[11px] font-semibold px-2 py-1 rounded uppercase absolute right-0 bottom-1 ${product.stockCountColor || 'text-gray-400 bg-white/5'}`}>
+                      <span className={`text-[9px] sm:text-[11px] font-semibold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded uppercase sm:absolute sm:right-0 sm:bottom-1 ${product.stockCountColor || 'text-gray-400 bg-white/5'}`}>
                         {product.stockCount}
                       </span>
                     </div>
                     <button 
                       onClick={() => handleAddToCart(product)}
-                      className="w-full bg-white/5 hover:bg-[#0EA5E9] border border-white/10 hover:border-[#0EA5E9] text-white py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2"
+                      className="w-full bg-white/5 hover:bg-[#0EA5E9] border border-white/10 hover:border-[#0EA5E9] text-white py-2 sm:py-3.5 rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-sm transition-all flex items-center justify-center gap-1 sm:gap-2"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                      Add to Cart
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                      <span className="hidden sm:inline">Add to Cart</span>
+                      <span className="sm:hidden">Add</span>
                     </button>
                   </div>
                 </div>
