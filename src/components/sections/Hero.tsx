@@ -12,7 +12,12 @@ export function Hero() {
 
   useEffect(() => {
     const fetchPrice = async () => {
-      const { data } = await supabase.from('prices').select('lpg_price_per_kg').limit(1).single();
+      const { data } = await supabase
+        .from('prices')
+        .select('lpg_price_per_kg')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .single();
       if (data) setGasPrice(data.lpg_price_per_kg);
     };
     fetchPrice();
