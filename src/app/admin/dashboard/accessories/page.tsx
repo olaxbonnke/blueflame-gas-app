@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Loader2, Save, X, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
-import { formatPrice } from '@/lib/utils';
 
 const CATEGORIES = ['Accessories', 'Regulators', 'Hoses', 'Burners', 'Cylinders', 'Other'];
 
