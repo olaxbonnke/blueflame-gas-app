@@ -13,7 +13,6 @@ function AuthCallbackContent() {
     let isMounted = true;
 
     const handleCallback = async () => {
-      // Wait briefly for Supabase to process the OAuth URL fragments
       await new Promise(r => setTimeout(r, 800));
 
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -32,16 +31,7 @@ function AuthCallbackContent() {
         return;
       }
 
-      // ── Super Admin Bypass ──────────────────────────────────────────────────
-      // If this email matches the env-var super admin, always allow through.
-      const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL?.toLowerCase();
-      if (superAdminEmail && email === superAdminEmail) {
-        if (isMounted) router.push('/admin/dashboard');
-        return;
-      }
-
-      // ── Whitelist Check ─────────────────────────────────────────────────────
-      // Everyone else MUST be in the admin_users table.
+      // Check admin_users whitelist — anyone in this table (any role) can access
       const { data: adminUser } = await supabase
         .from('admin_users')
         .select('role, status')
@@ -54,8 +44,8 @@ function AuthCallbackContent() {
         return;
       }
 
-      // Mark as Active on first login
-      if (adminUser.status === 'Invited') {
+      // Mark as Active on first login (skip for developer role — stay invisible)
+      if (adminUser.status === 'Invited' && adminUser.role !== 'developer') {
         await supabase.from('admin_users').update({ status: 'Active' }).eq('email', email);
       }
 

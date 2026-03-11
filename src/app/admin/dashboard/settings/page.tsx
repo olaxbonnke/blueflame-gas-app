@@ -16,8 +16,8 @@ function RevokeAccess() {
     if (confirm !== 'REVOKE') return;
     setLoading(true);
 
-    // 1. Delete ALL non-super-admin users from whitelist
-    await supabase.from('admin_users').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    // 1. Delete ALL non-developer admin users from the whitelist
+    await supabase.from('admin_users').delete().neq('role', 'developer');
 
     // 2. Sign out current session
     await supabase.auth.signOut();

