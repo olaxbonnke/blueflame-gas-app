@@ -8,117 +8,63 @@ import { Loader2, ShieldCheck, ShieldAlert } from 'lucide-react';
 function AuthCallbackContent() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [hash, setHash] = useState('');
 
   useEffect(() => {
     let isMounted = true;
-    setHash(window.location.hash);
-    
-    // Only proceed if there is a hash or if we explicitly don't need one
-    if (!window.location.hash && !window.location.search) {
-       return;
-    }
-    
+
     const handleCallback = async () => {
-      // Supabase client automatically processes the OAuth callback in the URL
+      // Wait briefly for Supabase to process the OAuth URL fragments
+      await new Promise(r => setTimeout(r, 800));
+
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
+
       if (sessionError || !session) {
-        if (isMounted) setError(sessionError?.message || 'Authentication failed. No session found.');
+        if (isMounted) setError('Authentication failed. Please try again.');
         setTimeout(() => isMounted && router.push('/admin?error=auth_failed'), 3000);
         return;
       }
 
-      const user = session.user;
-      if (!user?.email) {
-        if (isMounted) setError('No email associated with this Google Account detected.');
+      const email = session.user.email?.toLowerCase();
+      if (!email) {
         await supabase.auth.signOut();
+        if (isMounted) setError('No email found on this Google account.');
         setTimeout(() => isMounted && router.push('/admin?error=no_email'), 3000);
         return;
       }
 
-      try {
-        // 1. Check if ANY master admin exists in the system
-        const { data: mainAdmins, error: adminQueryError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('role', 'main_admin')
-          .limit(1);
-
-        if (adminQueryError) throw adminQueryError;
-
-        // 2. HIGHLANDER RULE: Are we the very first user ever?
-        if (!mainAdmins || mainAdmins.length === 0) {
-          // Become the undisputed Master Admin!
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .upsert({ id: user.id, role: 'main_admin' });
-          
-          if (insertError) throw insertError;
-          if (isMounted) router.push('/admin/dashboard');
-          return;
-        }
-
-        // 3. A master admin exists. Check if WE are already in profiles (we've logged in before)
-        const { data: myProfile, error: myProfileQueryError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (myProfileQueryError && myProfileQueryError.code !== 'PGRST116') {
-            // PGRST116 is "Rows not found", which is expected if not in profiles. Throw others.
-            throw myProfileQueryError;
-        }
-
-        if (myProfile) {
-          // We are already successfully registered (either main_admin or sub_admin)
-          if (isMounted) router.push('/admin/dashboard');
-          return;
-        }
-
-        // 4. We are NOT in profiles. We must check the whitelisted_emails table!
-        const { data: whitelist, error: whitelistError } = await supabase
-          .from('whitelisted_emails')
-          .select('role')
-          .eq('email', user.email)
-          .single();
-          
-        if (whitelistError && whitelistError.code !== 'PGRST116') {
-             throw whitelistError;
-        }
-
-        if (whitelist) {
-          // We are whitelisted! Promote us into the profiles table so we have constant access
-          const { error: insertSubAdminError } = await supabase
-            .from('profiles')
-            .upsert({ id: user.id, role: whitelist.role || 'regional_admin' });
-          
-          if (insertSubAdminError) throw insertSubAdminError;
-          if (isMounted) router.push('/admin/dashboard');
-          return;
-        } else {
-          // 5. INTRUDER ALERT! Email not recognized.
-          await supabase.auth.signOut();
-          if (isMounted) router.push('/admin?error=unauthorized');
-          return;
-        }
-
-      } catch (err: any) {
-        console.error(err);
-        if (isMounted) setError(err.message || 'An error occurred during authorization');
-        await supabase.auth.signOut();
-        setTimeout(() => isMounted && router.push('/admin'), 3000);
+      // ── Super Admin Bypass ──────────────────────────────────────────────────
+      // If this email matches the env-var super admin, always allow through.
+      const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL?.toLowerCase();
+      if (superAdminEmail && email === superAdminEmail) {
+        if (isMounted) router.push('/admin/dashboard');
+        return;
       }
+
+      // ── Whitelist Check ─────────────────────────────────────────────────────
+      // Everyone else MUST be in the admin_users table.
+      const { data: adminUser } = await supabase
+        .from('admin_users')
+        .select('role, status')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (!adminUser) {
+        await supabase.auth.signOut();
+        if (isMounted) router.push('/admin?error=unauthorized');
+        return;
+      }
+
+      // Mark as Active on first login
+      if (adminUser.status === 'Invited') {
+        await supabase.from('admin_users').update({ status: 'Active' }).eq('email', email);
+      }
+
+      if (isMounted) router.push('/admin/dashboard');
     };
 
-    // Slight delay to ensure the Supabase client has digested the URL fragments
-    const timer = setTimeout(handleCallback, 1000);
-    return () => {
-        isMounted = false;
-        clearTimeout(timer);
-    };
-  }, [router, hash]);
+    handleCallback();
+    return () => { isMounted = false; };
+  }, [router]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] text-white px-4 text-center">
@@ -158,5 +104,5 @@ export default function AuthCallback() {
     }>
       <AuthCallbackContent />
     </Suspense>
-  )
+  );
 }
