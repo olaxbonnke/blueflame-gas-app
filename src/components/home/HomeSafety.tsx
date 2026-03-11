@@ -33,7 +33,7 @@ export function HomeSafety() {
           </div>
         </FadeInView>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
           {TIPS.map((tip, i) => (
             <FadeInView key={tip.num} delay={0.1 * (i + 1)}>
               <div className="bg-[#0F1117] p-4 sm:p-6 rounded-xl border-l-4 border-[#0EA5E9] h-full flex flex-col sm:block">

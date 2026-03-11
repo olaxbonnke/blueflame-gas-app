@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase/client';
+import { Loader2, MapPin, Phone } from 'lucide-react';
 
 function FadeInView({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef(null);
@@ -14,13 +16,23 @@ function FadeInView({ children, delay = 0 }: { children: React.ReactNode; delay?
   );
 }
 
-const HUBS = [
-  { name: "Lagos Hub", addr: "12, Admiralty Way, Lekki Phase 1, Lagos State." },
-  { name: "Abuja Station", addr: "Plot 45, Wuse II District, FCT, Abuja." },
-  { name: "PH Garden Hub", addr: "99, Aba Road, Port Harcourt, Rivers State." },
-];
-
 export function HomeLocations() {
+  const [branches, setBranches] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const { data } = await supabase
+        .from('branches')
+        .select('id, name, address, phone')
+        .order('name')
+        .limit(3);
+      if (data) setBranches(data);
+      setLoading(false);
+    };
+    fetch();
+  }, []);
+
   return (
     <section className="bg-[#11151C] py-14 sm:py-20 border-b border-white/5" id="locations">
       <div className="container mx-auto px-4 sm:px-6">
@@ -31,23 +43,35 @@ export function HomeLocations() {
               We are expanding rapidly across Nigeria to serve you better. Visit our hubs for instant refill services or bulk collection.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-8 text-left">
-              {HUBS.map((hub, i) => (
-                <FadeInView key={hub.name} delay={0.15 * (i + 1)}>
-                  <div className="flex items-start gap-3 sm:flex-col sm:items-center md:items-start sm:gap-4 p-4 sm:p-6 bg-white/5 rounded-xl sm:rounded-2xl border border-white/10 transition-colors hover:border-[#0EA5E9]/30">
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#0EA5E9]/20 flex items-center justify-center shrink-0 sm:mb-2">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#0EA5E9]" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path>
-                      </svg>
+            {loading ? (
+              <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 text-[#0EA5E9] animate-spin" /></div>
+            ) : branches.length === 0 ? (
+              <div className="py-10 text-center text-gray-500">
+                <MapPin className="w-10 h-10 mx-auto mb-3 text-gray-700" />
+                <p className="text-sm">No branch locations set up yet.</p>
+              </div>
+            ) : (
+              <div className={`grid grid-cols-1 gap-3 sm:gap-6 text-left ${branches.length > 1 ? 'sm:grid-cols-2 lg:grid-cols-3' : ''}`}>
+                {branches.map((branch, i) => (
+                  <FadeInView key={branch.id} delay={0.15 * (i + 1)}>
+                    <div className="flex items-start gap-3 sm:flex-col sm:items-center md:items-start sm:gap-4 p-4 sm:p-6 bg-white/5 rounded-xl sm:rounded-2xl border border-white/10 hover:border-[#0EA5E9]/30 transition-colors">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#0EA5E9]/20 flex items-center justify-center shrink-0">
+                        <MapPin className="w-5 h-5 text-[#0EA5E9]" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm sm:text-lg mb-0.5 sm:mb-1 text-white">{branch.name}</h4>
+                        <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">{branch.address}</p>
+                        {branch.phone && (
+                          <p className="text-xs text-[#0EA5E9] mt-1 flex items-center gap-1">
+                            <Phone className="w-3 h-3" /> {branch.phone}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-sm sm:text-lg mb-0.5 sm:mb-1 text-white">{hub.name}</h4>
-                      <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">{hub.addr}</p>
-                    </div>
-                  </div>
-                </FadeInView>
-              ))}
-            </div>
+                  </FadeInView>
+                ))}
+              </div>
+            )}
 
             <FadeInView delay={0.5}>
               <div className="mt-8 sm:mt-10">
