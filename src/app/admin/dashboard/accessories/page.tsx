@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Loader2, Save, X, Package } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 const CATEGORIES = ['Accessories', 'Regulators', 'Hoses', 'Burners', 'Cylinders', 'Other'];
 
@@ -70,12 +71,11 @@ function AccessoryForm({ item, onSave, onCancel, isSaving }: any) {
           />
         </div>
         <div className="space-y-2 md:col-span-2">
-          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Image URL</label>
-          <input
-            className="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white focus:ring-1 focus:ring-blueflame focus:border-blueflame outline-none transition-colors text-sm"
-            placeholder="https://... or leave blank"
-            value={imageUrl}
-            onChange={e => setImageUrl(e.target.value)}
+          <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Product Image</label>
+          <ImageUpload
+            bucket="accessories"
+            currentUrl={imageUrl}
+            onUploaded={url => setImageUrl(url)}
           />
         </div>
       </div>

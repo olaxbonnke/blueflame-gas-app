@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Send, ChevronRight, Bold, Italic, Underline, List, ListOrdered, Link, Code, Calendar, CalendarDays, Loader2, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 const TAGS = ['Safety', 'Market Update', 'Maintenance', 'Promotion', 'Company News', 'Product Update'];
 const TAG_COLORS: Record<string, string> = {
@@ -163,27 +164,16 @@ export default function NewsletterEditorPage() {
               </div>
             </motion.div>
 
-            {/* Hero Image URL */}
             <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-[#121212] border border-white/5 rounded-xl p-6 space-y-4 shadow-xl">
               <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2 pb-2 border-b border-white/5">
                 <Calendar className="text-blueflame w-5 h-5" /> Hero Image
               </h3>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-400 ml-1">Image URL</label>
-                <input
-                  type="url"
-                  className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:ring-1 focus:ring-blueflame outline-none transition-all text-sm"
-                  placeholder="https://example.com/image.jpg"
-                  value={imageUrl}
-                  onChange={e => setImageUrl(e.target.value)}
-                />
-              </div>
-              {imageUrl && (
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-black/40 mt-2">
-                  <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                </div>
-              )}
-              <p className="text-xs text-gray-500">Paste a direct image URL. Recommended 1200×630px.</p>
+              <ImageUpload
+                bucket="newsletter-images"
+                currentUrl={imageUrl}
+                onUploaded={url => setImageUrl(url)}
+              />
+              <p className="text-xs text-gray-500">Recommended 1200×630px. Shown as the post card image on the newsletter page.</p>
             </motion.div>
           </div>
         </div>
