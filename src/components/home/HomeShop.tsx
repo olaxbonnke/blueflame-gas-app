@@ -25,7 +25,7 @@ export function HomeShop() {
       const { data } = await supabase
         .from('accessories')
         .select('id, name, description, price, image_url, stock_status')
-        .order('created_at', { ascending: false })
+        .order('name')
         .limit(4);
       if (data) setProducts(data);
       setLoading(false);
