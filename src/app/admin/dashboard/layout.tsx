@@ -24,7 +24,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       const email = session.user.email?.toLowerCase();
       setUserEmail(email || null);
 
-      // 2. Check whitelist — must be in admin_users table
+      // 2. Super admin bypass — always allowed, regardless of whitelist
+      const superAdminEmail = process.env.NEXT_PUBLIC_SUPER_ADMIN_EMAIL?.toLowerCase();
+      if (superAdminEmail && email === superAdminEmail) {
+        setRole('main_admin');
+        setLoading(false);
+        return;
+      }
+
+      // 3. Check whitelist — everyone else must be in admin_users table
       const { data: adminUser, error } = await supabase
         .from('admin_users')
         .select('role, status')
