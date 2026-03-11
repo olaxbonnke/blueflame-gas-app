@@ -8,34 +8,56 @@ import { Settings, LogOut, PackageSearch, LayoutDashboard, Truck, Users, Tag, Ma
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState<'main_admin' | 'regional_admin' | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [role, setRole] = useState<'main_admin' | 'sub_admin' | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const checkUser = async () => {
-      // TEMPORARILY DISABLED AUTH
-      /*
+      // 1. Check Supabase auth session
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/admin');
         return;
       }
 
-      // Fetch role
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-        
-      if (profile) setRole(profile.role);
-      */
-      
-      setRole('main_admin');
+      const email = session.user.email?.toLowerCase();
+      setUserEmail(email || null);
+
+      // 2. Check whitelist — must be in admin_users table
+      const { data: adminUser, error } = await supabase
+        .from('admin_users')
+        .select('role, status')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (!adminUser || error) {
+        // Not on whitelist — sign them out and redirect
+        await supabase.auth.signOut();
+        router.push('/admin?blocked=1');
+        return;
+      }
+
+      // 3. Set role from admin_users table
+      const r = adminUser.role?.toLowerCase() || '';
+      setRole(r.includes('sub') ? 'sub_admin' : 'main_admin');
+
+      // 4. Mark as Active if still Invited
+      if (adminUser.status === 'Invited') {
+        await supabase.from('admin_users').update({ status: 'Active' }).eq('email', email);
+      }
+
       setLoading(false);
     };
 
     checkUser();
+
+    // Re-check on auth state changes (catches token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') router.push('/admin');
+    });
+
+    return () => subscription.unsubscribe();
   }, [router]);
 
   const handleLogout = async () => {
@@ -44,7 +66,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] flex-col gap-3">
+        <div className="w-8 h-8 border-2 border-blueflame border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 text-sm">Verifying access...</p>
+      </div>
+    );
   }
 
   const links = [
@@ -72,14 +99,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <span className="text-blueflame">Blue</span>Flame Admin
           </Link>
           <span className="text-xs text-blueflame mt-1 uppercase tracking-wider font-semibold bg-blueflame/10 px-2 py-1 rounded inline-block">
-            {role === 'main_admin' ? 'Super Admin' : 'Regional'}
+            {role === 'main_admin' ? 'Super Admin' : 'Sub Admin'}
           </span>
+          {userEmail && <p className="text-[10px] text-gray-600 mt-1 truncate">{userEmail}</p>}
         </div>
-        
+
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {links.map((link) => (
-            <Link 
-              key={link.name} 
+            <Link
+              key={link.name}
               href={link.href}
               className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
             >
@@ -90,7 +118,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         <div className="p-4 border-t border-white/5">
-          <button 
+          <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-3 w-full rounded-lg text-red-400 hover:bg-red-500/10 transition-colors"
           >

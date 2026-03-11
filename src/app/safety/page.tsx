@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase/client';
 
 // Reusable scroll animation wrapper
 function FadeInView({ children, delay = 0, id }: { children: React.ReactNode; delay?: number; id?: string }) {
@@ -24,17 +25,28 @@ function FadeInView({ children, delay = 0, id }: { children: React.ReactNode; de
 }
 
 export default function SafetyPage() {
+  const [emergencyPhone, setEmergencyPhone] = useState('0800-SAFE-GAS');
+  const [emergencyWhatsapp, setEmergencyWhatsapp] = useState('');
+
+  useEffect(() => {
+    const fetch = async () => {
+      const { data } = await supabase.from('contacts').select('phone, whatsapp').limit(1).maybeSingle();
+      if (data?.phone) setEmergencyPhone(data.phone);
+      if (data?.whatsapp) setEmergencyWhatsapp(data.whatsapp);
+    };
+    fetch();
+  }, []);
   return (
     <div className="bg-[#0F1117] min-h-screen text-[#E5E7EB] font-sans pt-20">
       <main className="flex-1 flex flex-col items-center">
         <div className="w-full max-w-5xl px-6 py-10 space-y-16">
-          
+
           {/* Hero Section */}
           <FadeInView>
             <div className="relative rounded-2xl overflow-hidden min-h-[320px] flex flex-col justify-end p-8 bg-[#11151C] shadow-2xl border border-white/5">
               <div className="absolute inset-0 opacity-40 bg-gradient-to-t from-[#0F1117] via-transparent to-transparent z-10"></div>
-              <div 
-                className="absolute inset-0 z-0 bg-center bg-cover transition-transform duration-1000 hover:scale-105" 
+              <div
+                className="absolute inset-0 z-0 bg-center bg-cover transition-transform duration-1000 hover:scale-105"
                 style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCSsr93PQMUYXfYlQQKwOjfn7YKIvrCZxsbFZkdi_12lMvORpU_Sz9slqx8FL4CwySwgaY2qTbvF-g6u_4g-Fc8shj6d_KfTczMqEgVwodPmsSLPgM8iS-P1cQtbrwgRh2hRRZP6u9PCDYthYTKPdJwxwTQJptytBNxIYky6ZgEWVoM4BnqgTZRhbuAB9GsDoEn9m2gR_izj3x-A-JJGWaGzjmd40w6CfVPmkScrrEfeK5WQVyPWMxD9heAG97qolnrOaTuGkVztXQ")' }}
               ></div>
               <div className="relative z-20 max-w-2xl">
@@ -78,7 +90,7 @@ export default function SafetyPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-20">
             {/* Main Content */}
             <div className="md:col-span-8 space-y-20">
-              
+
               {/* Ventilation */}
               <FadeInView id="ventilation">
                 <div className="flex items-center gap-3 mb-6">
@@ -176,8 +188,8 @@ export default function SafetyPage() {
                   <h2 className="text-2xl font-bold text-white">Child Safety</h2>
                 </div>
                 <div className="flex flex-col md:flex-row gap-8 items-stretch bg-white/5 rounded-2xl overflow-hidden border border-white/10">
-                  <div 
-                    className="w-full md:w-2/5 h-48 md:h-auto min-h-[250px] bg-center bg-cover" 
+                  <div
+                    className="w-full md:w-2/5 h-48 md:h-auto min-h-[250px] bg-center bg-cover"
                     style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCBnQcpcKPAB7Yc9UeJGM1RIK35i7WhJYiBfF_0f0OgOV1xwKc4rs3QjQip12eVPKCnvd91PqBP4DiHX4awtNPPNE6A9Cw6IciDwxk-XX3FalZZbrwM5UpCp9_ghpC9SvXuQ47yVHgzHnMH74q83gxQS4_Lvn4xRE9xYj8OehJLmyHpO9klWTjkgaVhtYKJ8oQBvylCeqVHK3c7epQJkm7MbPxUUaAED12sqaMQUYTomqzst5xHLtB6chcAC8GKN5U4F6Gjw7-SOWg")' }}
                   ></div>
                   <div className="p-8 md:w-3/5 flex flex-col justify-center">
@@ -219,21 +231,15 @@ export default function SafetyPage() {
                       <li><strong className="text-white">Evacuate:</strong> Get everyone out immediately.</li>
                       <li><strong className="text-white">Call Us:</strong> Contact us from a safe distance.</li>
                     </ol>
-                    <Link href="tel:0800SAFEGAS" className="mt-8 flex items-center justify-center gap-3 w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl transition-all shadow-lg shadow-red-500/30">
+                    <Link href={`tel:${emergencyPhone}`} className="mt-8 flex items-center justify-center gap-3 w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black rounded-xl transition-all shadow-lg shadow-red-500/30">
                       <span className="material-symbols-outlined">call</span>
-                      0800-SAFE-GAS
+                      {emergencyPhone}
                     </Link>
-                  </div>
-
-                  <div className="bg-[#11151C] border border-white/5 rounded-3xl p-8 shadow-xl">
-                    <h4 className="font-bold mb-4 flex items-center gap-2 text-white text-lg">
-                      <span className="material-symbols-outlined text-[#0EA5E9] text-2xl">support_agent</span>
-                      Need Assistance?
-                    </h4>
-                    <p className="text-sm text-gray-400 mb-6">Our safety experts are available 24/7 for consultations and appliance checks.</p>
-                    <button className="w-full py-3 bg-white/5 hover:bg-[#0EA5E9] border border-white/10 hover:border-[#0EA5E9] text-white font-bold rounded-xl transition-all shadow-lg">
-                      Book Safety Check
-                    </button>
+                    {emergencyWhatsapp && (
+                      <Link href={`https://wa.me/${emergencyWhatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center justify-center gap-3 w-full py-3 bg-green-600/20 hover:bg-green-600/40 border border-green-500/30 text-green-400 font-bold rounded-xl transition-all text-sm">
+                        WhatsApp Emergency
+                      </Link>
+                    )}
                   </div>
                 </div>
               </FadeInView>

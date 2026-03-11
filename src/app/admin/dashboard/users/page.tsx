@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, UserPlus, Loader2, Trash2, Shield, ShieldCheck, RefreshCw, Mail, X, CheckCircle } from 'lucide-react';
+import { Search, UserPlus, Loader2, Trash2, Shield, ShieldCheck, RefreshCw, Mail, CheckCircle, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 const ROLES = ['Main Admin', 'Regional Admin', 'Sub-Admin'];
 
@@ -230,6 +231,82 @@ function UsersTable({ refresh }: { refresh: number }) {
   );
 }
 
+// ─── Nuclear Revoke ───────────────────────────────────────────────────────────
+function RevokeAccess() {
+  const [confirm, setConfirm] = useState('');
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleRevoke = async () => {
+    if (confirm !== 'REVOKE') { alert('Type REVOKE exactly to proceed.'); return; }
+    setLoading(true);
+
+    // 1. Delete all admin users from the whitelist
+    await supabase.from('admin_users').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+
+    // 2. Sign out the current session
+    await supabase.auth.signOut();
+
+    // 3. Open a pre-filled email to the developer
+    const subject = encodeURIComponent('BlueFlame Gas — Super Admin Revoked Access');
+    const body = encodeURIComponent(
+      'Hi Developer,\n\nThe Super Admin has revoked all access on the BlueFlame Gas admin dashboard.\n\n' +
+      'All admin users have been removed. The dashboard is now locked.\n\n' +
+      'Please set up a new Super Admin account before enabling public login.\n\nTimestamp: ' + new Date().toISOString()
+    );
+    window.open(`mailto:olaitan@example.com?subject=${subject}&body=${body}`);
+
+    // 4. Redirect to login
+    router.push('/admin?revoked=1');
+    setLoading(false);
+  };
+
+  return (
+    <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+      className="bg-rose-950/20 border border-rose-500/20 rounded-xl overflow-hidden">
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-3 p-5 text-left hover:bg-rose-500/5 transition-colors">
+        <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />
+        <div>
+          <h3 className="font-bold text-rose-400">Danger Zone — Revoke Super Admin Access</h3>
+          <p className="text-xs text-gray-500 mt-0.5">Permanently removes all admin users and locks the dashboard until you contact the developer.</p>
+        </div>
+      </button>
+
+      {open && (
+        <div className="px-5 pb-6 space-y-4 border-t border-rose-500/10">
+          <div className="mt-4 bg-rose-500/10 border border-rose-500/20 rounded-lg p-4 text-sm text-rose-300 space-y-1">
+            <p className="font-bold">⚠️ This action will:</p>
+            <ul className="list-disc pl-4 text-xs space-y-1 text-rose-400">
+              <li>Delete ALL admin users from the whitelist</li>
+              <li>Sign you out immediately</li>
+              <li>Send an automatic email to the developer</li>
+              <li>Lock the dashboard — no one can log in until a new admin is set up</li>
+            </ul>
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Type REVOKE to confirm</label>
+            <input
+              className="w-full bg-black/50 border border-rose-500/30 rounded-lg px-3 py-2.5 text-white text-sm outline-none focus:border-rose-500 placeholder:text-gray-600"
+              placeholder="REVOKE"
+              value={confirm}
+              onChange={e => setConfirm(e.target.value)}
+            />
+          </div>
+          <button
+            onClick={handleRevoke}
+            disabled={confirm !== 'REVOKE' || loading}
+            className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
+            {loading ? 'Revoking...' : 'Revoke All Access & Lock Dashboard'}
+          </button>
+        </div>
+      )}
+    </motion.section>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function UserManagementPage() {
   const [refresh, setRefresh] = useState(0);
@@ -245,6 +322,7 @@ export default function UserManagementPage() {
 
       <InviteForm onInvited={() => setRefresh(r => r + 1)} />
       <UsersTable refresh={refresh} />
+      <RevokeAccess />
     </div>
   );
 }
