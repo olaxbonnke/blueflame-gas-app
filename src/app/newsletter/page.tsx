@@ -1,9 +1,8 @@
 'use client';
 
-import Link from 'next/link';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 
 function FadeInView({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -16,11 +15,103 @@ function FadeInView({ children, delay = 0, className = "" }: { children: React.R
   );
 }
 
+// ─── Article Modal ────────────────────────────────────────────────────────────
+function ArticleModal({ post, onClose }: { post: any; onClose: () => void }) {
+  // Close on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
+
+  // Prevent body scroll while open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        {/* Backdrop */}
+        <motion.div
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          onClick={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        />
+
+        {/* Modal Card */}
+        <motion.div
+          className="relative z-10 bg-[#11151C] border border-white/10 rounded-3xl shadow-2xl shadow-black/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+          initial={{ opacity: 0, scale: 0.92, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: 30 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {/* Hero Image */}
+          {post.image_url && (
+            <div className="w-full h-52 sm:h-64 overflow-hidden rounded-t-3xl relative">
+              <div
+                className="w-full h-full bg-cover bg-center"
+                style={{ backgroundImage: `url("${post.image_url}")` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#11151C] to-transparent" />
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="p-6 sm:p-10">
+            {/* Tag + Close */}
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <span className={`${post.tag_color || 'bg-[#0EA5E9]'} text-white px-3 py-1 text-xs font-black uppercase tracking-wider rounded-lg`}>
+                {post.tag}
+              </span>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                aria-label="Close article"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Date */}
+            <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-3">
+              {new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+
+            {/* Title */}
+            <h2 className="text-2xl sm:text-3xl font-black text-white leading-snug mb-4">
+              {post.title}
+            </h2>
+
+            {/* Divider */}
+            <div className="h-px bg-white/5 mb-6" />
+
+            {/* Body */}
+            <div className="prose prose-invert prose-sm sm:prose-base max-w-none text-gray-300 leading-relaxed whitespace-pre-line">
+              {post.content || post.excerpt || 'Full article content coming soon.'}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function NewsletterPage() {
   const [bulletins, setBulletins] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -43,6 +134,11 @@ export default function NewsletterPage() {
 
   return (
     <div className="bg-[#0F1117] min-h-screen text-[#E5E7EB] font-sans pt-20">
+      {/* Article Modal */}
+      {selectedPost && (
+        <ArticleModal post={selectedPost} onClose={() => setSelectedPost(null)} />
+      )}
+
       <main className="flex-1">
         {/* Hero / Subscription Section */}
         <section className="px-6 py-12 md:py-20 flex flex-col lg:flex-row items-center gap-12 max-w-7xl mx-auto">
@@ -137,7 +233,13 @@ export default function NewsletterPage() {
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8">
                 {bulletins.map((post, idx) => (
                   <FadeInView key={post.id} delay={0.1 + idx * 0.1} className="h-full">
-                    <article className="flex flex-col h-full bg-[#0F1117] rounded-3xl overflow-hidden border border-white/5 shadow-lg shadow-black/20 hover:shadow-2xl hover:border-[#0EA5E9]/30 transition-all duration-500 group cursor-pointer">
+                    <article
+                      className="flex flex-col h-full bg-[#0F1117] rounded-3xl overflow-hidden border border-white/5 shadow-lg shadow-black/20 hover:shadow-2xl hover:border-[#0EA5E9]/30 transition-all duration-500 group cursor-pointer"
+                      onClick={() => setSelectedPost(post)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedPost(post); }}
+                    >
                       <div className="h-32 sm:h-52 w-full bg-white/5 relative overflow-hidden">
                         {post.image_url ? (
                           <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url("${post.image_url}")` }} />
