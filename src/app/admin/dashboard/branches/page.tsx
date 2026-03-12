@@ -112,7 +112,8 @@ export default function BranchManagementPage() {
                }
             }
          } else {
-            alert("Failed to delete branch. Ensure there are no active orders tied to it.");
+            console.error("Delete error:", error);
+            alert("Failed to delete branch. This is usually due to existing orders or sub-admins linked to this location.\n\nPlease run the 'fix_branch_deletion.sql' script in your Supabase SQL Editor to allow deletion.");
          }
      }
   };

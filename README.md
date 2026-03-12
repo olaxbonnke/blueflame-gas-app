@@ -76,6 +76,11 @@ This platform utilizes strict Supabase RLS (Row Level Security) policies.
 
 ---
 
+### 5. Troubleshooting: Branch Deletion
+If you cannot delete a branch due to existing orders, run the `fix_branch_deletion.sql` script in your Supabase SQL Editor. This will update the database to allow deletion while preserving order history.
+
+---
+
 ## ☁️ Deployment
 This project is optimized for deployment on **Vercel**:
 1. Push your code to GitHub.
